@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Splitors\**" />
+    <Compile Remove="Transformers\**" />
+    <EmbeddedResource Remove="Splitors\**" />
+    <EmbeddedResource Remove="Transformers\**" />
+    <None Remove="Splitors\**" />
+    <None Remove="Transformers\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Transcriptor\Transcriptor.csproj" />
+  </ItemGroup>
+
+</Project>
