@@ -1,5 +1,4 @@
 ﻿using Transcriptor.HanguelRomanization.Types;
-using Transcriptor.Types;
 
 namespace Transcriptor.HanguelRomanization.Common;
 
@@ -11,12 +10,9 @@ static class IEnumerableExtensions
         return sequence;
     }
 
-    public static IEnumerable<SyllableType> ApplyTransforms(this IEnumerable<SyllableType> syllables) =>
-        TransformSyllableSequences.ApplyAll.Invoke(syllables);
-
-    public static IEnumerable<SyllableType> ToSyllables(this IEnumerable<PhraseType> phrases) =>
-        phrases.SelectMany(p => p.Syllables);
-
     public static List<PhraseType> ToPhrases(this IEnumerable<string> chops) =>
         [.. chops.SelectMany(KoreanPhrase.CreateMany)];
+
+    public static PhraseType ToPhrase(this IEnumerable<SyllableType> syllables) =>
+        Phrase.Create(syllables);
 }

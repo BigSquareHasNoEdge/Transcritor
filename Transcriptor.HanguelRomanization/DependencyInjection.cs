@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Transcriptor.HanguelRomanization.Types;
 
 namespace Transcriptor.HanguelRomanization;
 

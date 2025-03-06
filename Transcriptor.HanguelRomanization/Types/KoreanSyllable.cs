@@ -1,56 +1,33 @@
-using Transcriptor.Functions;
+using System.Text;
 using Transcriptor.HanguelRomanization.Common;
-using Transcriptor.Types;
 using static Transcriptor.HanguelRomanization.Functions.MapJamoBlocks;
 
 namespace Transcriptor.HanguelRomanization.Types;
 
 static class KoreanSyllable
 {
-    public static Transcribe Romanizer => s => s.Letters.Length switch
-    {
-        0 => Script.Empty,
-
-        1 => Script.Create(
-                GetConsonantName(s.Letters[0]) 
-                ?? GetVowelName(s.Letters[0]) 
-                ?? s.Letters[0].ToString()
-            ),
-
-        2 => Script.Create(
-                GetChoSeongRoman(s.Letters[0]) ?? s.Letters[0].ToString(),
-                GetVowelRoman(s.Letters[1]) ?? s.Letters[1].ToString()
-            ),
-
-        3 => Script.Create(
-            GetChoSeongRoman(s.Letters[0]) ?? s.Letters[0].ToString(),
-            GetVowelRoman(s.Letters[1]) ?? s.Letters[1].ToString(),
-            GetJongSeongRoman(s.Letters[2]) ?? s.Letters[2].ToString()
-            ),
-
-        _ => Script.Create(s.Letters)
-    };
-
-    public static string Trasncribe(SyllableType s) => s.Letters.Length switch
+    static string Trasncribe(SyllableType s) => s.Letters.Length switch
     {
         0 => string.Empty,
 
-        1 => GetConsonantName(s.Letters[0])
-                ?? GetVowelName(s.Letters[0])
+        1 => GetConsonantName(s.Letters[0]) ?? GetVowelName(s.Letters[0])
                 ?? s.Letters[0].ToString(),
 
-        2 => GetChoSeongRoman(s.Letters[0]) ?? s.Letters[0].ToString() +
-                GetVowelRoman(s.Letters[1]) ?? s.Letters[1].ToString(),
+        2 => (GetChoSeongRoman(s.Letters[0]) ?? s.Letters[0].ToString()) +
+                (GetVowelRoman(s.Letters[1]) ?? s.Letters[1].ToString()),
 
-        3 => GetChoSeongRoman(s.Letters[0]) ?? s.Letters[0].ToString() + 
-                GetVowelRoman(s.Letters[1]) ?? s.Letters[1].ToString() + 
-                GetJongSeongRoman(s.Letters[2]) ?? s.Letters[2].ToString(),
+        3 => (GetChoSeongRoman(s.Letters[0]) ?? s.Letters[0].ToString()) + 
+                (GetVowelRoman(s.Letters[1]) ?? s.Letters[1].ToString()) + 
+                (GetJongSeongRoman(s.Letters[2]) ?? s.Letters[2].ToString()),
 
         _ => new (s.Letters)
     };
 
-
-
+    public static string Trasncribe(IEnumerable<SyllableType> syllables) =>
+        syllables.Aggregate(
+            new StringBuilder(),
+            (sb, str) => sb.Append(Trasncribe(str))
+        ).ToString();
 
     static readonly Dictionary<char, string> vowelRomans = new()
     {
@@ -165,7 +142,6 @@ static class KoreanSyllable
     public static bool HasJongsung(this SyllableType syllable) =>
         syllable.Letters.Length == 3 && IsConsonant(syllable.Letters[2]);
 
-
     public static string? GetChoSeongRoman(char @char) =>
         choseongRomans.TryGetValue(@char, out var roman) ? roman : null;
     
@@ -177,6 +153,7 @@ static class KoreanSyllable
 
     public static string? GetConsonantName(char @char) =>
         consonantNames.TryGetValue(@char, out var roman) ? roman : null;
+
     public static string? GetVowelName(char @char) => GetVowelRoman(@char);
 
     public static bool IsVowel(char letter) => vowelRomans.ContainsKey(letter);

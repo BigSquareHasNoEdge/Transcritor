@@ -1,6 +1,4 @@
-﻿using Transcriptor.Types;
-
-namespace Transcriptor.Functions;
+﻿namespace Transcriptor;
 
 public delegate PhraseType TransformPhrase(PhraseType phrase);
 

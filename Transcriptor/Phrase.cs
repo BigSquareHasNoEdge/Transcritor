@@ -1,4 +1,4 @@
-﻿namespace Transcriptor.Types;
+﻿namespace Transcriptor;
 
 public record PhraseType(SyllableType[] Syllables)
 {
@@ -9,4 +9,6 @@ public record PhraseType(SyllableType[] Syllables)
 public static class Phrase
 {
     public static PhraseType Create(params SyllableType[] syllables) => new(syllables);
+    public static PhraseType Create(IEnumerable<SyllableType> syllables) => 
+        Create([..syllables]);
 }

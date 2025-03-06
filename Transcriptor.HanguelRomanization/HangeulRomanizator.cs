@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace Transcriptor.HanguelRomanization.Types;
+namespace Transcriptor.HanguelRomanization;
 
 class HangeulRomanizator : ITranscriptor
 {

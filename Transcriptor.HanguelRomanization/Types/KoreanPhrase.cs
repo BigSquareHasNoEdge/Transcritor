@@ -1,51 +1,83 @@
-﻿using Transcriptor.HanguelRomanization.Common;
-using Transcriptor.Types;
+﻿using System.Text;
+using Transcriptor.HanguelRomanization.Common;
+using Transcriptor.HanguelRomanization.Types;
 
 namespace Transcriptor.HanguelRomanization.Types;
 
 public static class KoreanPhrase
 {
-    internal static IEnumerable<PhraseType> CreateMany(string chunk) =>
-        chunk.Length == 0 ? []
-        : AsPronouces(chunk)
-        .Select(p => 
-            p.ByCharacter ? Phrase.Create([.. p.Text.Select(KoreanSyllable.Create)])
-            : Phrase.Create(Syllable.Create(p.Text.ToCharArray())));
+    public static TranscribePhrase Romanize => phrase =>
+        KoreanSyllable.Trasncribe(phrase.Syllables);
 
-    static IEnumerable<Pronouce> AsPronouces(string chunk) =>
-        SplitByHanguel(chunk).ToList()
-        .Select(seg => 
-            new Pronouce(seg, seg.First().IsHanguel()));
+    public static TransformPhrase AllTransforms => phrase =>
+    ConsonantAssimillation
+    .Then(NienRieulEpenthetic)
+    .Then(Palatalization)
+    .Then(Aspiration)
+    .Then(EmptifyChosungYieung)
+    .Invoke(phrase);
+    /// <summary>
+    /// 자음 동화
+    /// ㄱㅁ => ㅇㅁ
+    /// ㄴㄹ => ㄴㄴ
+    /// ㅇㄹ => ㅇㄴ
+    /// ㅂㄹ => ㅁㄴ
+    /// ㄹㄹ => ㄹㄴ
+    /// ㄴㄹ => ㄹㄹ
+    /// </summary>
+    public static TransformPhrase ConsonantAssimillation => phrase => phrase;
 
-    public static IEnumerable<string> SplitByHanguel(string chunk)
-    {
-        if (chunk.Length == 0) yield break;
+    /// <summary>
+    /// ㄴ, ㄹ 덧소리
+    /// </summary>
+    public static TransformPhrase NienRieulEpenthetic => phrase => phrase;
 
-        if (chunk.Length == 1 || chunk.Any(c => c.IsHanguel()) is false)
+    /// <summary>
+    /// 구개음화
+    /// </summary>
+    public static TransformPhrase Palatalization => phrase => phrase;
+
+    /// <summary>
+    /// 탁음화(거센 소리)
+    /// </summary>
+    public static TransformPhrase Aspiration => phrase => phrase;
+
+
+    const char Yieung = 'ㅇ';
+    /// <summary>
+    /// 모음 뒤 ㅇ 생략
+    /// </summary>
+    public static TransformPhrase EmptifyChosungYieung => phrase =>
+        phrase.Syllables.Prepend(Syllable.Empty).Zip(phrase.Syllables)
+        .Foreach(t =>
         {
-            yield return chunk;
-            yield break;
-        }
-
-        var first = chunk[0];
-        char[] others = [.. chunk[1..]];
-
-        var blankSeprated = others.Aggregate(
-            new List<char>([first]),
-            (list, next) =>
+            if ((t.First.Letters.Length == 0 || t.First.HasJongsung())
+                && t.Second.Letters.First() == Yieung)
             {
-                if (list.Last().IsHanguel() != next.IsHanguel())
-                {
-                    list.Add('\0');
-                }
-                list.Add(next);
-                return list;                        
-            },
-            list => new string([.. list]));
+                t.Second.Letters[0] = '\0';
+            }
+        }).Select(t => t.Second)
+    .ToPhrase();
 
-        foreach (var seg in blankSeprated.Split('\0'))
-        {
-            yield return seg;
-        }
-    }
+    internal static IEnumerable<PhraseType> CreateMany(string chop) =>
+         ToHangeulChecks(chop)
+        .Select(t => 
+            t.IsHangeul ? Phrase.Create([.. t.Text.Select(KoreanSyllable.Create)])
+            : Phrase.Create(Syllable.Create(t.Text.ToCharArray())));
+
+
+    static IEnumerable<(string Text, bool IsHangeul)> ToHangeulChecks(string chop) =>
+        SplitByHanguel(chop)
+        .Select(seg => (seg, seg.First().IsHanguel()));
+
+    static string[] SplitByHanguel(string chop) => 
+        chop.Length == 0 ? []        
+        : chop.Length == 1  ? [chop]
+        : chop.Skip(1).Aggregate(
+            new StringBuilder(chop[..1]),
+            (sb, next) => sb[^1].IsHanguel() != next.IsHanguel() 
+                ? sb.Append('\0').Append(next) 
+                : sb.Append(next),
+            sb => sb.ToString().Split('\0'));
+    
 }

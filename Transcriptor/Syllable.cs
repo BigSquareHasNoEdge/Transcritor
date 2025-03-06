@@ -1,4 +1,4 @@
-namespace  Transcriptor.Types;
+namespace Transcriptor;
 public record SyllableType(char[] Letters)
 {
     public override string ToString() => string.Concat(Letters);
