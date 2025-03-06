@@ -1,15 +1,17 @@
 ﻿using Transcriptor.HanguelRomanization.Common;
+using Transcriptor.HanguelRomanization.Functions;
 using Transcriptor.HanguelRomanization.Types;
+
 namespace Transcriptor.HanguelRomanization;
 
 public static class StringExtensions
 {
     public static string RomanizeHangeuls(this string text, char delimiter) =>
-        RomanizeHangeuls(text, delimiter, KoreanPhrase.AllTransforms);
+        RomanizeHangeuls(text, delimiter, SyncTransformers.AllTransforms);
 
     public static string RomanizeHangeuls(this string text, char delimiter, 
         TransformPhrase trasformers) =>
-        RomanizeHangeuls(text, delimiter, trasformers, KoreanPhrase.Romanize);
+        RomanizeHangeuls(text, delimiter, trasformers, SyncTransformers.Romanize);
 
     public static string RomanizeHangeuls(this string text, char delimiter, 
         TransformPhrase transformers, TranscribePhrase transcriber) =>
@@ -18,10 +20,10 @@ public static class StringExtensions
                 .Select(transcriber.Invoke));
 
     public static string RomanizeHangeuls(this string text) =>
-        text.RomanizeHangeuls(KoreanPhrase.AllTransforms);    
+        text.RomanizeHangeuls(SyncTransformers.AllTransforms);    
 
     public static string RomanizeHangeuls(this string text, TransformPhrase transformers) =>
-        text.RomanizeHangeuls(transformers, KoreanPhrase.Romanize);
+        text.RomanizeHangeuls(transformers, SyncTransformers.Romanize);
 
     public static string RomanizeHangeuls(this string text, 
         TransformPhrase transformers, TranscribePhrase transcriber) =>
