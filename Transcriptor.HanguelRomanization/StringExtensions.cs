@@ -8,25 +8,25 @@ public static class StringExtensions
         RomanizeHangeuls(text, delimiter, KoreanPhrase.AllTransforms);
 
     public static string RomanizeHangeuls(this string text, char delimiter, 
-        TransformPhrase trasforms) =>
-        RomanizeHangeuls(text, delimiter, trasforms, KoreanPhrase.Romanize);
+        TransformPhrase trasformers) =>
+        RomanizeHangeuls(text, delimiter, trasformers, KoreanPhrase.Romanize);
 
     public static string RomanizeHangeuls(this string text, char delimiter, 
-        TransformPhrase transforms, TranscribePhrase transcribes) =>
+        TransformPhrase transformers, TranscribePhrase transcriber) =>
         string.Join(delimiter,
-            text.Split().ToPhrases().Select(transforms.Invoke)
-                .Select(transcribes.Invoke));
+            text.Split().ToPhrases().Select(transformers.Invoke)
+                .Select(transcriber.Invoke));
 
     public static string RomanizeHangeuls(this string text) =>
         text.RomanizeHangeuls(KoreanPhrase.AllTransforms);    
 
-    public static string RomanizeHangeuls(this string text, TransformPhrase transforms) =>
-        text.RomanizeHangeuls(transforms, KoreanPhrase.Romanize);
+    public static string RomanizeHangeuls(this string text, TransformPhrase transformers) =>
+        text.RomanizeHangeuls(transformers, KoreanPhrase.Romanize);
 
     public static string RomanizeHangeuls(this string text, 
-        TransformPhrase transforms, TranscribePhrase transcribes) =>
+        TransformPhrase transformers, TranscribePhrase transcriber) =>
         string.Concat(text.Chop().ToPhrases()
-            .Select(transforms.Invoke).Select(transcribes.Invoke));
+            .Select(transformers.Invoke).Select(transcriber.Invoke));
 
     public static IEnumerable<string> Chop(this string text)
     {
