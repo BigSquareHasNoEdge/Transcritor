@@ -1,6 +1,5 @@
 ﻿using Transcriptor.HanguelRomanization.Common;
 using Transcriptor.HanguelRomanization.Functions;
-using Transcriptor.HanguelRomanization.Types;
 
 namespace Transcriptor.HanguelRomanization;
 
