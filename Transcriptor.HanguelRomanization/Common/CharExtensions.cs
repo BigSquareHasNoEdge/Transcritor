@@ -25,7 +25,7 @@ enum Hangeul
     /// </summary>
     None,
     /// <summary>
-    /// a unit of prononciation composed of an opening consonant, a vowel, and, optionally, a stoping consonant.
+    /// a unit of pronounciation composed of an opening consonant, a vowel, and, optionally, a stoping consonant.
     /// </summary>
     Syllable,
     /// <summary>

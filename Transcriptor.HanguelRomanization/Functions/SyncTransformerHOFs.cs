@@ -3,7 +3,7 @@ using Transcriptor.HanguelRomanization.Types;
 
 namespace Transcriptor.HanguelRomanization.Functions;
 
-public static class SyncTransformers
+public static class SyncTransformerHOFs
 {
     public static TranscribePhrase Romanize => phrase =>
         KoreanSyllable.Trasncribe(phrase.Syllables);
@@ -35,7 +35,8 @@ public static class SyncTransformers
     /// <summary>
     /// 구개음화
     /// </summary>
-    public static TransformPhrase Palatalization => phrase => phrase;
+    public static TransformPhrase Palatalization =>
+        phrase => phrase;
 
     /// <summary>
     /// 탁음화(거센 소리)
@@ -51,7 +52,7 @@ public static class SyncTransformers
         phrase.Syllables.Prepend(Syllable.Empty).Zip(phrase.Syllables)
         .Foreach(t =>
         {
-            if ((t.First.Letters.Length == 0 || t.First.HasJongsung())
+            if ((t.First.Letters.Length == 0 || t.First.HasJongseong())
                 && t.Second.Letters.First() == Yieung)
             {
                 t.Second.Letters[0] = '\0';
@@ -59,4 +60,5 @@ public static class SyncTransformers
         })
         .Select(t => t.Second)
         .ToPhrase();
+
 }

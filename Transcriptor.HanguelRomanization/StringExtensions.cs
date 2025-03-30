@@ -6,11 +6,11 @@ namespace Transcriptor.HanguelRomanization;
 public static class StringExtensions
 {
     public static string RomanizeHangeuls(this string text, char delimiter) =>
-        RomanizeHangeuls(text, delimiter, SyncTransformers.AllTransforms);
+        RomanizeHangeuls(text, delimiter, SyncTransformerHOFs.AllTransforms);
 
     public static string RomanizeHangeuls(this string text, char delimiter, 
         TransformPhrase trasformers) =>
-        RomanizeHangeuls(text, delimiter, trasformers, SyncTransformers.Romanize);
+        RomanizeHangeuls(text, delimiter, trasformers, SyncTransformerHOFs.Romanize);
 
     public static string RomanizeHangeuls(this string text, char delimiter, 
         TransformPhrase transformers, TranscribePhrase transcriber) =>
@@ -19,10 +19,10 @@ public static class StringExtensions
                 .Select(transcriber.Invoke));
 
     public static string RomanizeHangeuls(this string text) =>
-        text.RomanizeHangeuls(SyncTransformers.AllTransforms);    
+        text.RomanizeHangeuls(SyncTransformerHOFs.AllTransforms);    
 
     public static string RomanizeHangeuls(this string text, TransformPhrase transformers) =>
-        text.RomanizeHangeuls(transformers, SyncTransformers.Romanize);
+        text.RomanizeHangeuls(transformers, SyncTransformerHOFs.Romanize);
 
     public static string RomanizeHangeuls(this string text, 
         TransformPhrase transformers, TranscribePhrase transcriber) =>

@@ -26,9 +26,13 @@ static class KoreanSyllable
     public static string Trasncribe(IEnumerable<SyllableType> syllables) =>
         syllables.Aggregate(
             new StringBuilder(),
-            (sb, str) => sb.Append(Trasncribe(str))
-        ).ToString();
+            (sb, syllable) => sb.Append(Trasncribe(syllable)),
+            sb => sb.ToString()
+        );
 
+    /// <summary>
+    /// Vowels pronouce same as its name.
+    /// </summary>
     static readonly Dictionary<char, string> vowelRomans = new()
     {
         { 'ㅏ', "a" },
@@ -55,7 +59,7 @@ static class KoreanSyllable
     };
     static readonly Dictionary<char, string> choseongRomans = new()
     {
-        { 'ㄱ', "g" },
+        { 'ㄱ', "g" }, 
         { 'ㄲ', "kk" },
         { 'ㄴ', "n" },
         { 'ㄷ', "d" },
@@ -85,7 +89,7 @@ static class KoreanSyllable
         { 'ㄶ', "nh" },
         { 'ㄷ', "t" },
         { 'ㄹ', "l" },
-        { 'ㄺ', "lk" },
+        { 'ㄺ', "lg" },
         { 'ㄻ', "lm" },
         { 'ㄼ', "lb" },
         { 'ㄽ', "ls" },
@@ -95,17 +99,20 @@ static class KoreanSyllable
         { 'ㅁ', "m" },
         { 'ㅂ', "p" },
         { 'ㅄ', "ps" },
-        { 'ㅅ', "s" },
-        { 'ㅆ', "ss" },
+        { 'ㅅ', "t" },
+        { 'ㅆ', "t" },
         { 'ㅇ', "ng" },
-        { 'ㅈ', "j" },
+        { 'ㅈ', "t" },
         { 'ㅊ', "ch" },
         { 'ㅋ', "k" },
         { 'ㅌ', "t" },
         { 'ㅍ', "p" },
         { 'ㅎ', "h" }
     };
-    static readonly Dictionary<char, string> consonantNames = new()
+    /// <summary>
+    /// Consonants pronounce different from its name.
+    /// </summary>
+    static readonly Dictionary<char, string> consonantNameRomans = new()
     {
         { 'ㄱ', "giyeok" },
         { 'ㄲ', "ssanggiyeok" },
@@ -139,8 +146,12 @@ static class KoreanSyllable
         { 'ㅄ', "bieupsiot" },
     };
 
-    public static bool HasJongsung(this SyllableType syllable) =>
+    public static bool HasJongseong(this SyllableType syllable) =>
         syllable.Letters.Length == 3 && IsConsonant(syllable.Letters[2]);
+
+    public static bool HasChoseong(this SyllableType syllable) =>
+        syllable.Letters.Length is (>= 2) and (<= 3) 
+        && IsConsonant(syllable.Letters[0]) && IsVowel(syllable.Letters[1]);
 
     public static string? GetChoSeongRoman(char @char) =>
         choseongRomans.TryGetValue(@char, out var roman) ? roman : null;
@@ -152,12 +163,12 @@ static class KoreanSyllable
         jongseongRomans.TryGetValue(@char, out var roman) ? roman : null;
 
     public static string? GetConsonantName(char @char) =>
-        consonantNames.TryGetValue(@char, out var roman) ? roman : null;
+        consonantNameRomans.TryGetValue(@char, out var roman) ? roman : null;
 
     public static string? GetVowelName(char @char) => GetVowelRoman(@char);
 
-    public static bool IsVowel(char letter) => vowelRomans.ContainsKey(letter);
-    public static bool IsConsonant(char letter) => consonantNames.ContainsKey(letter);
+    public static bool IsVowel(char @char) => vowelRomans.ContainsKey(@char);
+    public static bool IsConsonant(char @char) => consonantNameRomans.ContainsKey(@char);
 
     // Todo 옛한글(Jamo block Extended A, B) 지원 
     public static SyllableType Create(char @char) => @char.GetHangeul() switch 
@@ -177,7 +188,7 @@ static class KoreanSyllable
         int cho = code / (21 * 28);
         int jung = code % (21 * 28) / 28;
         int jong = code % (21 * 28) % 28;
-
+        
         return jong == 0 ? [chos[cho], vowels[jung]]
             : [chos[cho], vowels[jung], jongs[jong]];
     }

@@ -2,7 +2,7 @@
 
 public delegate PhraseType TransformPhrase(PhraseType phrase);
 
-public static class TransformPhraseExtensions
+public static class TransformPhraseHOFs
 {
     public static TransformPhrase Then(this TransformPhrase first, TransformPhrase next) =>
         phrase => next(first(phrase));
@@ -10,7 +10,7 @@ public static class TransformPhraseExtensions
 
 public delegate Task<PhraseType> TransformPhraseAsync(PhraseType phrase);
 
-public static class TransformPhraseAsyncExtensions
+public static class TransformPhraseAsyncHOFs
 {
     public static TransformPhraseAsync Then(this TransformPhraseAsync first, TransformPhraseAsync next) =>
         async phrase => await next(await first(phrase));
