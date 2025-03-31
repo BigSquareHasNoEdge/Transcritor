@@ -13,7 +13,6 @@ public static class SyncTransformerHOFs
         .Then(NienRieulEpenthetic)
         .Then(Palatalization)
         .Then(Aspiration)
-        .Then(EmptifyChosungYieung)
         .Invoke(phrase);
 
     /// <summary>
@@ -42,23 +41,4 @@ public static class SyncTransformerHOFs
     /// 탁음화(거센 소리)
     /// </summary>
     public static TransformPhrase Aspiration => phrase => phrase;
-
-
-    const char Yieung = 'ㅇ';
-    /// <summary>
-    /// 모음 뒤 ㅇ 생략
-    /// </summary>
-    public static TransformPhrase EmptifyChosungYieung => phrase =>
-        phrase.Syllables.Prepend(Syllable.Empty).Zip(phrase.Syllables)
-        .Foreach(t =>
-        {
-            if ((t.First.Letters.Length == 0 || t.First.HasJongseong())
-                && t.Second.Letters.First() == Yieung)
-            {
-                t.Second.Letters[0] = '\0';
-            }
-        })
-        .Select(t => t.Second)
-        .ToPhrase();
-
 }
