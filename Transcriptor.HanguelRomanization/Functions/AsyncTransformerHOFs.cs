@@ -1,7 +1,5 @@
 ﻿namespace Transcriptor.HanguelRomanization.Functions;
-
-public static class AsyncTransformerHOFs
-{
+public static class AsyncTransformerHOFs{
     public static TransformPhraseAsync All => NounAsIs;
 
 

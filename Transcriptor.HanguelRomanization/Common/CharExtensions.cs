@@ -1,5 +1,4 @@
 namespace Transcriptor.HanguelRomanization.Common;
-
 static class CharExtensions
 {
     public static Hangeul GetHangeul(this char c) => (int)c switch 

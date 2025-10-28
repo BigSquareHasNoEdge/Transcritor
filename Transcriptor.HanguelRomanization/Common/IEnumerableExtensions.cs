@@ -1,7 +1,6 @@
 ﻿using Transcriptor.HanguelRomanization.Types;
 
 namespace Transcriptor.HanguelRomanization.Common;
-
 static class IEnumerableExtensions
 {
     public static IEnumerable<T> Foreach<T>(this IEnumerable<T> sequence, Action<T> action)
