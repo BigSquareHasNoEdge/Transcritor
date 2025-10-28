@@ -2,7 +2,6 @@
 using Transcriptor.HanguelRomanization.Functions;
 
 namespace Transcriptor.HanguelRomanization;
-
 public static class StringExtensions
 {
     public static string RomanizeHangeuls(this string text, char delimiter) =>
