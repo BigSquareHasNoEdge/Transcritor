@@ -19,10 +19,10 @@ jobs:
           dotnet-version: '9.0.x' # 또는 7.0.x 등 사용 중인 버전
 
       - name: Restore dependencies
-        run: dotnet restore Transcritor.sln
+        run: dotnet restore
 
       - name: Build project
-        run: dotnet build Transcritor.sln --configuration Release --no-restore
+        run: dotnet build --configuration Release --no-restore
 
       - name: Pack NuGet
         run: dotnet pack Transcriptor.HanguelRomanization/Transcriptor.HanguelRomanization.csproj --configuration Release --output ./nupkg
