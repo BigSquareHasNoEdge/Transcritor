@@ -20,23 +20,22 @@ jobs:
 
     # STEP 1: nuget.config 생성 (GitHub 인증 포함)
     - name: Create nuget.config with GitHub credentials
-      - name: Create nuget.config with GitHub credentials
-  run: |
-    OWNER=${{ github.repository_owner }}
-    TOKEN=${{ secrets.GITHUB_TOKEN }}
+      run: |
+        OWNER=${{ github.repository_owner }}
+        TOKEN=${{ secrets.GITHUB_TOKEN }}
 
-    echo '<?xml version="1.0" encoding="utf-8"?>' > nuget.config
-    echo '<configuration>' >> nuget.config
-    echo '  <packageSources>' >> nuget.config
-    echo "    <add key=\"github\" value=\"https://nuget.pkg.github.com/${OWNER}/index.json\" />" >> nuget.config
-    echo '  </packageSources>' >> nuget.config
-    echo '  <packageSourceCredentials>' >> nuget.config
-    echo '    <github>' >> nuget.config
-    echo "      <Username>${OWNER}</Username>" >> nuget.config
-    echo "      <ClearTextPassword>${TOKEN}</ClearTextPassword>" >> nuget.config
-    echo '    </github>' >> nuget.config
-    echo '  </packageSourceCredentials>' >> nuget.config
-    echo '</configuration>' >> nuget.config
+        echo '<?xml version="1.0" encoding="utf-8"?>' > nuget.config
+        echo '<configuration>' >> nuget.config
+        echo '  <packageSources>' >> nuget.config
+        echo "    <add key=\"github\" value=\"https://nuget.pkg.github.com/${OWNER}/index.json\" />" >> nuget.config
+        echo '  </packageSources>' >> nuget.config
+        echo '  <packageSourceCredentials>' >> nuget.config
+        echo '    <github>' >> nuget.config
+        echo "      <Username>${OWNER}</Username>" >> nuget.config
+        echo "      <ClearTextPassword>${TOKEN}</ClearTextPassword>" >> nuget.config
+        echo '    </github>' >> nuget.config
+        echo '  </packageSourceCredentials>' >> nuget.config
+        echo '</configuration>' >> nuget.config
 
     # STEP 2: Transcriptor 빌드 및 패키지 푸시
     - name: Build Transcriptor
