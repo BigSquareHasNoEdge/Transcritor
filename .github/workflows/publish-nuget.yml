@@ -3,7 +3,7 @@ name: Publish NuGet Packages
 on:
   push:
     tags:
-      - 'v*'  # 예: v1.0.0, v1.0.1 등
+      - 'v*'
 
 jobs:
   publish:
@@ -18,7 +18,26 @@ jobs:
       with:
         dotnet-version: '9.0.x'
 
-    # STEP 1: Transcriptor 빌드 및 패키지 푸시
+    # Remove any checked-in nuget.config that contains bad credentials
+    - name: Remove checked-in nuget.config
+      run: rm -f ./nuget.config
+
+    # Configure feeds at runtime using secrets (no credentials committed)
+    - name: Configure NuGet feeds (nuget.org + GitHub Packages)
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        # Ensure nuget.org is available
+        dotnet nuget add source "https://api.nuget.org/v3/index.json" -n nuget.org || true
+
+        # Add GitHub Packages feed and store credentials in the runner config (not committed)
+        dotnet nuget add source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
+          -n github-packages \
+          --username "${{ github.repository_owner }}" \
+          --password "$GITHUB_TOKEN" \
+          --store-password-in-clear-text || true
+
+    # STEP 1: Transcriptor build / pack / push
     - name: Build Transcriptor
       run: dotnet build ./Transcriptor/Transcriptor.csproj -c Release
 
@@ -26,16 +45,22 @@ jobs:
       run: dotnet pack ./Transcriptor/Transcriptor.csproj -c Release --output ./nupkg
 
     - name: Push Transcriptor to GitHub Packages
-      run: dotnet nuget push ./nupkg/Transcriptor.*.nupkg --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key "${{ secrets.GITHUB_TOKEN }}"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        dotnet nuget push ./nupkg/Transcriptor.*.nupkg \
+          --source "github-packages" \
+          --api-key "$GITHUB_TOKEN" \
+          --skip-duplicate
 
-    # STEP 2: Transcriptor.HanguelRomanization 참조 전환
+    # STEP 2: Switch Transcriptor.HanguelRomanization to use package instead of ProjectReference
     - name: Remove ProjectReference to Transcriptor
       run: dotnet remove ./Transcriptor.HanguelRomanization/Transcriptor.HanguelRomanization.csproj reference ../Transcriptor/Transcriptor.csproj
 
     - name: Add PackageReference to Transcriptor
       run: dotnet add ./Transcriptor.HanguelRomanization/Transcriptor.HanguelRomanization.csproj package Transcriptor --version 1.0.0 --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
 
-    # STEP 3: Transcriptor.HanguelRomanization 빌드 및 패키지 푸시
+    # STEP 3: Transcriptor.HanguelRomanization build / pack / push
     - name: Build Transcriptor.HanguelRomanization
       run: dotnet build ./Transcriptor.HanguelRomanization/Transcriptor.HanguelRomanization.csproj -c Release
 
@@ -43,4 +68,10 @@ jobs:
       run: dotnet pack ./Transcriptor.HanguelRomanization/Transcriptor.HanguelRomanization.csproj -c Release --output ./nupkg
 
     - name: Push Transcriptor.HanguelRomanization to GitHub Packages
-      run: dotnet nuget push ./nupkg/Transcriptor.HanguelRomanization.*.nupkg --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key "${{ secrets.GITHUB_TOKEN }}"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        dotnet nuget push ./nupkg/Transcriptor.HanguelRomanization.*.nupkg \
+          --source "github-packages" \
+          --api-key "$GITHUB_TOKEN" \
+          --skip-duplicate
