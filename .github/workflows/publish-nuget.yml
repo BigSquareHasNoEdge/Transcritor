@@ -33,14 +33,14 @@ jobs:
 
     - name: Push Transcriptor to GitHub Packages
       run: |
-        dotnet nuget push ./nupkg/Transcriptor.*.nupkg --source "github-packages" --skip-duplicate
+        dotnet nuget push ./nupkg/Transcriptor.*.nupkg --source github-packages --skip-duplicate
 
     # STEP 2: Switch Transcriptor.HanguelRomanization to use package instead of ProjectReference
     - name: Remove ProjectReference to Transcriptor
       run: dotnet remove ./Transcriptor.HanguelRomanization/Transcriptor.HanguelRomanization.csproj reference ../Transcriptor/Transcriptor.csproj
 
     - name: Add PackageReference to Transcriptor
-      run: dotnet add ./Transcriptor.HanguelRomanization/Transcriptor.HanguelRomanization.csproj package Transcriptor --version 1.0.0 --source "github-packages"
+      run: dotnet add ./Transcriptor.HanguelRomanization/Transcriptor.HanguelRomanization.csproj package Transcriptor --version 1.0.0 --source github-packages
 
     # STEP 3: Transcriptor.HanguelRomanization build / pack / push
     - name: Build Transcriptor.HanguelRomanization
@@ -51,4 +51,4 @@ jobs:
 
     - name: Push Transcriptor.HanguelRomanization to GitHub Packages
       run: |
-        dotnet nuget push ./nupkg/Transcriptor.HanguelRomanization.*.nupkg --source "github-packages" --skip-duplicate
+        dotnet nuget push ./nupkg/Transcriptor.HanguelRomanization.*.nupkg --source github-packages --skip-duplicate
