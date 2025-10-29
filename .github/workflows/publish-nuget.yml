@@ -24,20 +24,18 @@ jobs:
         OWNER="${{ github.repository_owner }}"
         TOKEN="${{ secrets.GITHUB_TOKEN }}"
 
-        cat > nuget.config <<EOF
-<?xml version="1.0" encoding="utf-8"?>
-<configuration>
-  <packageSources>
-    <add key="github" value="https://nuget.pkg.github.com/${OWNER}/index.json" />
-  </packageSources>
-  <packageSourceCredentials>
-    <github>
-      <Username>${OWNER}</Username>
-      <ClearTextPassword>${TOKEN}</ClearTextPassword>
-    </github>
-  </packageSourceCredentials>
-</configuration>
-EOF
+        printf "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" > nuget.config
+        printf "<configuration>\n" >> nuget.config
+        printf "  <packageSources>\n" >> nuget.config
+        printf "    <add key=\"github\" value=\"https://nuget.pkg.github.com/%s/index.json\" />\n" "$OWNER" >> nuget.config
+        printf "  </packageSources>\n" >> nuget.config
+        printf "  <packageSourceCredentials>\n" >> nuget.config
+        printf "    <github>\n" >> nuget.config
+        printf "      <Username>%s</Username>\n" "$OWNER" >> nuget.config
+        printf "      <ClearTextPassword>%s</ClearTextPassword>\n" "$TOKEN" >> nuget.config
+        printf "    </github>\n" >> nuget.config
+        printf "  </packageSourceCredentials>\n" >> nuget.config
+        printf "</configuration>\n" >> nuget.config
 
     # STEP 2: Transcriptor 빌드 및 패키지 푸시
     - name: Build Transcriptor
