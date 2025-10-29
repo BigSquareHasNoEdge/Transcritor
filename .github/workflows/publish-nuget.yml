@@ -23,7 +23,6 @@ jobs:
       run: |
         OWNER="${{ github.repository_owner }}"
         TOKEN="${{ secrets.GITHUB_TOKEN }}"
-
         printf "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" > nuget.config
         printf "<configuration>\n" >> nuget.config
         printf "  <packageSources>\n" >> nuget.config
